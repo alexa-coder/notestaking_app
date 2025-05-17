@@ -1,0 +1,31 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: notetaking_db
+      MYSQL_USER: django_user
+      MYSQL_PASSWORD: Inpl2010@1
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_HOST=db
+      - MYSQLCLIENT_CFLAGS=-I/usr/include/mysql
+      - MYSQLCLIENT_LDFLAGS=-L/usr/lib/mysql
+    depends_on:
+      - db
+
+volumes:
+  db_data:
